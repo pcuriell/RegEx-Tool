@@ -48,10 +48,14 @@ class RegexApp(FloatLayout):
         self.last=50
 
         #Display the rows in the range.
-        self.refresh_display()
+        self.refresh_display(self.textlist)
+
+        self.pattern=r'\b\w{4}\b'
+        self.text=' '.join(self.textlist)
+        self.output=self.highlight_matches(self.pattern,self.text)
+        self.refresh_display(self.output)
 
 
-        self.highlight_matches(r'\b2\d{3}\b')
 
     #Calls Scrolls on scroll up or down.
     def on_touch_down(self, touch):
@@ -78,7 +82,7 @@ class RegexApp(FloatLayout):
                 self.last+=10
                 #print(self.first,self.last)
 
-        self.refresh_display()
+        self.refresh_display(self.output)
 
 
     #Load text from file.
@@ -90,23 +94,59 @@ class RegexApp(FloatLayout):
 
 
     #Loads the display.
-    def refresh_display(self):
-        self.ids.target.text=''.join(self.textlist[self.first:self.last+1])
+    def refresh_display(self,text):
+        self.ids.target.text=''.join(text[self.first:self.last+1])
 
 
-    def highlight_matches(self,regex_pattern):
-        text=''.join(self.textlist)
-        matches=re.findall(regex_pattern,text)
-        print(matches)
 
-        for number,line in enumerate(self.textlist):
-            for match in matches:
-                if match in line:
-                    self.textlist[number].replace(match,f'[color=ff6600]{match}[/color=ff6600]')
-                    print('match highlighted')
+    #Upgraded re.findall function that will be used on highlight_matches function.
+    def find_all(self,pattern,text):
+        '''This function acts like re.findall, but returns the spans in addition to the matched strings.'''
+
+        #Variable where the matches and spans are stored.
+        matches=[]
+
+        #Variable to resume re.search after first match.
+        span_start=0
+
+        #While the position is located before the end of the string.
+        while span_start<len(text)-1:
+
+            match=re.search(pattern,text[span_start:])
+
+            #If there are no more matches in the current text, then stop seaerching.
+            if match==None:
+                break
+
+            #Add match with its span to the result.
+            matches+=[[match.group(),match.span()[0]+span_start,match.span()[1]+span_start]]
+            span_start=match.span()[1]+span_start
+
+        return matches
 
 
-        self.refresh_display()
+
+    def highlight_matches(self,pattern,text):
+
+        #The way the function is made now, it requires for all the text to be joined in one large string.
+
+
+        matches=self.find_all(pattern,text)
+
+        output=list(text)
+
+        #When a item is inserted in the list, the spans coordinates get shifted. Count variable accounts for this.
+        count=0
+
+        for match in matches:
+            output.insert(match[1]+count,'[color=ff6600]')
+            count+=1
+            output.insert(match[2]+count,'[/color]')
+            count+=1
+
+        output=''.join(output)
+
+        return output.splitlines()
 
 
 
