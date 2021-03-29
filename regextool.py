@@ -3,6 +3,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from os import system #For printing debugging.
 
 Builder.load_string("""
 
@@ -37,8 +38,9 @@ class RegexApp(FloatLayout):
 
     def __init__(self, **kwargs):
         super(RegexApp, self).__init__(**kwargs)
-        #The text, split in lines.
-        self.textlist=''
+        #Original text split into lines. This is so only lines shown are loaded
+        #into the label text instead of the full document.
+        self.text=''
 
         #Load text from file.
         self.load_text()
@@ -47,11 +49,8 @@ class RegexApp(FloatLayout):
         self.first=0
         self.last=50
 
-        #Display the rows in the range.
-        self.refresh_display(self.textlist)
-
+        #Hardcoded pattern. To be changed for input.
         self.pattern=r'\b\w{4}\b'
-        self.text=' '.join(self.textlist)
         self.output=self.highlight_matches(self.pattern,self.text)
         self.refresh_display(self.output)
 
@@ -65,7 +64,7 @@ class RegexApp(FloatLayout):
     #Changes the range depending on the scroll and refreshes display.
     def scroll(self,direction):
 
-        max=len(self.textlist)
+        max=len(self.text)
 
 
         if direction=='scrolldown':
@@ -89,13 +88,16 @@ class RegexApp(FloatLayout):
     def load_text(self,filepath='testfile.txt'):
         with open(filepath,'r') as f:
             #self.ids.target.text=f.read()
-            self.textlist=f.readlines()
-            print(len(self.textlist))
+            self.text=f.read()
+            print(len(self.text))
+            #print(self.text[:2000])
 
 
     #Loads the display.
     def refresh_display(self,text):
-        self.ids.target.text=''.join(text[self.first:self.last+1])
+        self.ids.target.text='\n'.join(text[self.first:self.last])
+        system('cls')
+        print('\n'.join(self.text.splitlines()[self.first:self.last]))
 
 
 
@@ -145,6 +147,7 @@ class RegexApp(FloatLayout):
             count+=1
 
         output=''.join(output)
+
 
         return output.splitlines()
 
