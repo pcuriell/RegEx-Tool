@@ -22,7 +22,7 @@ Builder.load_string("""
             Line:
                 width: 3
                 rectangle: self.x, self.y, self.width, self.height
-        Label:
+        RegexLabel:
             id: target
             markup:True
             pos_hint: {'x':0.20,'top':0.95}
@@ -32,12 +32,14 @@ Builder.load_string("""
 
 """)
 
-
 class RegexApp(FloatLayout):
+    pass
+
+class RegexLabel(Label):
 
 
     def __init__(self, **kwargs):
-        super(RegexApp, self).__init__(**kwargs)
+        super(RegexLabel, self).__init__(**kwargs)
         #Original text split into lines. This is so only lines shown are loaded
         #into the label text instead of the full document.
         self.text=''
@@ -87,7 +89,7 @@ class RegexApp(FloatLayout):
     #Load text from file.
     def load_text(self,filepath='testfile.txt'):
         with open(filepath,'r') as f:
-            #self.ids.target.text=f.read()
+
             self.text=f.read()
             print(len(self.text))
             #print(self.text[:2000])
@@ -95,7 +97,7 @@ class RegexApp(FloatLayout):
 
     #Loads the display.
     def refresh_display(self,text):
-        self.ids.target.text='\n'.join(text[self.first:self.last])
+        self.text='\n'.join(text[self.first:self.last])
         system('cls')
         print('\n'.join(self.text.splitlines()[self.first:self.last]))
 
