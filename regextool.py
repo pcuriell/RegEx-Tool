@@ -8,41 +8,64 @@ from os import system #For printing debugging.
 Builder.load_string("""
 
 <RegexApp>:
-    TextInput:
+    PatternInput:
         id:pattern
         pos_hint: {'x':0,'top':1}
         size_hint:0.3,0.05
 
-    ScrollView:
-        pos_hint: {'x':0.3,'top':1}
-        size_hint:0.7,1
+
+    RegexLabel:
         canvas.before:
             Color:
                 rgba:1,0,0,1
             Line:
                 width: 3
                 rectangle: self.x, self.y, self.width, self.height
-        RegexLabel:
-            id: target
-            markup:True
-            pos_hint: {'x':0.20,'top':0.95}
-            size_hint: 1,None
-            text_size:self.width,None
-            height: self.texture_size[1]
+        markup:True
+        pos_hint: {'x':0.3,'top':0.95}
+        size_hint: 0.68,None
+        text_size:self.width,None
+        height: self.texture_size[1]
 
 """)
+
+
 
 class RegexApp(FloatLayout):
     pass
 
+
+class PatternInput(TextInput):
+    def __init__(self, **kwargs):
+        super(PatternInput, self).__init__(**kwargs)
+
+        self.bind(text=self.update_regex)
+
+    def update_regex(self,instance,pattern):
+        regexlabel=self.parent.children[0]
+        try:
+            if pattern=='':
+                regexlabel.output=regexlabel.source_text
+                regexlabel.refresh_display(regexlabel.source_text)
+
+            elif pattern != '' and pattern[-1]!='\\' and pattern not in [r'\b']:
+                output=regexlabel.highlight_matches(pattern,regexlabel.source_text)
+                regexlabel.refresh_display(output)
+
+            elif pattern[-1]=='\\' or pattern in [r'\b']:
+                pass
+        except:
+            pass
+
+
+
+
 class RegexLabel(Label):
-
-
     def __init__(self, **kwargs):
         super(RegexLabel, self).__init__(**kwargs)
         #Original text split into lines. This is so only lines shown are loaded
         #into the label text instead of the full document.
-        self.text=''
+        self.source_text=''
 
         #Load text from file.
         self.load_text()
@@ -51,11 +74,9 @@ class RegexLabel(Label):
         self.first=0
         self.last=50
 
-        #Hardcoded pattern. To be changed for input.
-        self.pattern=r'\b\w{4}\b'
-        self.output=self.highlight_matches(self.pattern,self.text)
-        self.refresh_display(self.output)
 
+        self.refresh_display(self.source_text)
+        self.output=self.source_text
 
 
     #Calls Scrolls on scroll up or down.
@@ -89,17 +110,15 @@ class RegexLabel(Label):
     #Load text from file.
     def load_text(self,filepath='testfile.txt'):
         with open(filepath,'r') as f:
-
-            self.text=f.read()
-            print(len(self.text))
-            #print(self.text[:2000])
+            self.source_text=f.read()
 
 
     #Loads the display.
     def refresh_display(self,text):
+        text=text.splitlines()
         self.text='\n'.join(text[self.first:self.last])
-        system('cls')
-        print('\n'.join(self.text.splitlines()[self.first:self.last]))
+        # system('cls')
+        # print('\n'.join(self.text.splitlines()[self.first:self.last]))
 
 
 
@@ -128,13 +147,10 @@ class RegexLabel(Label):
 
         return matches
 
-
-
+    #Requires a whole string. Not lines list.
     def highlight_matches(self,pattern,text):
 
         #The way the function is made now, it requires for all the text to be joined in one large string.
-
-
         matches=self.find_all(pattern,text)
 
         output=list(text)
@@ -150,8 +166,8 @@ class RegexLabel(Label):
 
         output=''.join(output)
 
-
-        return output.splitlines()
+        self.output=output
+        return output
 
 
 
