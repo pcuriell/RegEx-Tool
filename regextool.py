@@ -48,15 +48,14 @@ class PatternInput(TextInput):
                 regexlabel.output=regexlabel.source_text
                 regexlabel.refresh_display(regexlabel.source_text)
 
-            elif pattern != '' and pattern[-1]!='\\' and pattern not in [r'\b']:
+            elif pattern != '' and pattern[-1]!='\\' and pattern not in [r'\b',' ']:
                 output=regexlabel.highlight_matches(pattern,regexlabel.source_text)
                 regexlabel.refresh_display(output)
 
-            elif pattern[-1]=='\\' or pattern in [r'\b']:
+            elif pattern[-1]=='\\' or pattern in [r'\b',' ']:
                 pass
         except:
             pass
-
 
 
 class RegexLabel(Label):
@@ -155,8 +154,8 @@ class RegexLabel(Label):
         output=list(text)
 
         #To alternate the highlight colors.
-        colors=['[b][color=ff6600]','[b][color=3cb371]','[b][color=ff6600]']
-        color='[b][color=3cb371]'
+        colors=['[u][b][color=ff6600]','[u][b][color=3cb371]','[u][b][color=ff6600]']
+        color='[u][b][color=3cb371]'
 
         #When a item is inserted in the list, the spans coordinates get shifted. Count variable accounts for this.
         count=0
@@ -167,7 +166,7 @@ class RegexLabel(Label):
 
             output.insert(match[1]+count,color)
             count+=1
-            output.insert(match[2]+count,'[/color][/b]')
+            output.insert(match[2]+count,'[/color][/b][/u]')
             count+=1
 
         output=''.join(output)
