@@ -59,7 +59,6 @@ class PatternInput(TextInput):
 
 
 
-
 class RegexLabel(Label):
     def __init__(self, **kwargs):
         super(RegexLabel, self).__init__(**kwargs)
@@ -155,13 +154,20 @@ class RegexLabel(Label):
 
         output=list(text)
 
+        #To alternate the highlight colors.
+        colors=['[b][color=ff6600]','[b][color=3cb371]','[b][color=ff6600]']
+        color='[b][color=3cb371]'
+
         #When a item is inserted in the list, the spans coordinates get shifted. Count variable accounts for this.
         count=0
-
         for match in matches:
-            output.insert(match[1]+count,'[color=ff6600]')
+
+            #Alternate the color:
+            color=colors[colors.index(color)+1]
+
+            output.insert(match[1]+count,color)
             count+=1
-            output.insert(match[2]+count,'[/color]')
+            output.insert(match[2]+count,'[/color][/b]')
             count+=1
 
         output=''.join(output)
