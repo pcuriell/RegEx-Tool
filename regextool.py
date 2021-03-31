@@ -48,11 +48,11 @@ class PatternInput(TextInput):
                 regexlabel.output=regexlabel.source_text
                 regexlabel.refresh_display(regexlabel.source_text)
 
-            elif pattern != '' and pattern[-1]!='\\' and pattern not in [r'\b',' ']:
+            elif pattern != '' and pattern[-1] not in ['\\','|'] and pattern not in [r'\b',' ']:
                 output=regexlabel.highlight_matches(pattern,regexlabel.source_text)
                 regexlabel.refresh_display(output)
 
-            elif pattern[-1]=='\\' or pattern in [r'\b',' ']:
+            elif pattern[-1] in ['\\','|'] or pattern in [r'\b',' ']:
                 pass
         except:
             pass
@@ -97,7 +97,7 @@ class RegexLabel(Label):
 
         if direction=='scrollup':
 
-            if self.last<max+25:
+            if self.last<max+500:
                 self.first+=10
                 self.last+=10
                 #print(self.first,self.last)
@@ -115,8 +115,8 @@ class RegexLabel(Label):
     def refresh_display(self,text):
         text=text.splitlines()
         self.text='\n'.join(text[self.first:self.last])
-        # system('cls')
-        # print('\n'.join(self.text.splitlines()[self.first:self.last]))
+        system('cls')
+        print('\n'.join(self.text.splitlines()[self.first:self.last]))
 
 
 
