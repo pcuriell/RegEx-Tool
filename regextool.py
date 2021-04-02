@@ -181,8 +181,8 @@ class RegexLabel(Label):
 if __name__ == '__main__':
     from kivy.app import App
 
-    class test(App):
+    class RegexTool(App):
         def build(self):
             return RegexApp()
 
-    test().run()
+    RegexTool().run()
