@@ -43,16 +43,17 @@ class PatternInput(TextInput):
 
     def update_regex(self,instance,pattern):
         regexlabel=self.parent.children[0]
+        exceptions=[r'\b',' ',r'\w',r'\d',r'.']
         try:
             if pattern=='':
                 regexlabel.output=regexlabel.source_text
                 regexlabel.refresh_display(regexlabel.source_text)
 
-            elif pattern != '' and pattern[-1] not in ['\\','|'] and pattern not in [r'\b',' ']:
+            elif pattern != '' and pattern[-1] not in ['\\','|'] and pattern not in exceptions:
                 output=regexlabel.highlight_matches(pattern,regexlabel.source_text)
                 regexlabel.refresh_display(output)
 
-            elif pattern[-1] in ['\\','|'] or pattern in [r'\b',' ']:
+            elif pattern[-1] in ['\\','|'] or pattern in exceptions:
                 pass
         except:
             pass
