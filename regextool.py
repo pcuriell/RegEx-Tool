@@ -93,14 +93,12 @@ class RegexLabel(Label):
             if self.first>0:
                 self.first-=10
                 self.last-=10
-                #print(self.first,self.last)
 
         if direction=='scrollup':
 
             if self.last<max+500:
                 self.first+=10
                 self.last+=10
-                #print(self.first,self.last)
 
         self.refresh_display(self.output)
 
@@ -115,8 +113,9 @@ class RegexLabel(Label):
     def refresh_display(self,text):
         text=text.splitlines()
         self.text='\n'.join(text[self.first:self.last])
-        system('cls')
-        print('\n'.join(self.text.splitlines()[self.first:self.last]))
+        #system('cls')
+        #print('\n'.join(self.text.splitlines()[self.first:self.last]))
+
 
 
 
@@ -126,14 +125,14 @@ class RegexLabel(Label):
 
         #Variable where the matches and spans are stored.
         matches=[]
-
+        pattern=re.compile(pattern)
         #Variable to resume re.search after first match.
         span_start=0
 
         #While the position is located before the end of the string.
         while span_start<len(text)-1:
 
-            match=re.search(pattern,text[span_start:])
+            match=pattern.search(text[span_start:])
 
             #If there are no more matches in the current text, then stop seaerching.
             if match==None:
@@ -150,6 +149,7 @@ class RegexLabel(Label):
 
         #The way the function is made now, it requires for all the text to be joined in one large string.
         matches=self.find_all(pattern,text)
+
 
         output=list(text)
 
@@ -172,6 +172,13 @@ class RegexLabel(Label):
         output=''.join(output)
 
         self.output=output
+
+        #Print result in console.
+        system('cls')
+        for match in matches:
+            print(match)
+        print(f'Total matches: {len(matches)}')
+
         return output
 
 
